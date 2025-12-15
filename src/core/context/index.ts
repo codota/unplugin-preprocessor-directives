@@ -21,6 +21,7 @@ export function resolveOptions(options?: UserOptions): Required<UserOptions> {
     include: ['**/*'],
     exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/],
     directives: [],
+    preserveLineNumbers: false,
     ...options,
   }
 }
@@ -92,7 +93,9 @@ export class Context {
     const s = new MagicString(code, {
       filename: id,
     })
-    MsGenerator.generate(transformed, this.generates, s)
+    MsGenerator.generate(transformed, this.generates, s, {
+      preserveLineNumbers: this.options.preserveLineNumbers,
+    })
     return s
   }
 

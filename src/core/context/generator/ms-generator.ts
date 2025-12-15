@@ -5,7 +5,9 @@ import { Generator } from './generator'
 
 type Range = readonly [number, number]
 
-export interface MsGeneratorOptions extends GeneratorOptions { }
+export interface MsGeneratorOptions extends GeneratorOptions {
+  preserveLineNumbers?: boolean
+}
 
 /**
  * 基于 MagicString 的代码转换器
@@ -96,7 +98,14 @@ export class MsGenerator extends Generator {
 
   private applyExclusion(): void {
     if (this.keepRanges.length === 0) {
-      this.s.remove(0, this.s.original.length)
+      const preserveLineNumbers = this.options.preserveLineNumbers ?? false
+      if (preserveLineNumbers) {
+        const newlineCount = (this.s.original.match(/\n/g) || []).length
+        this.s.overwrite(0, this.s.original.length, '\n'.repeat(newlineCount))
+      }
+      else {
+        this.s.remove(0, this.s.original.length)
+      }
       return
     }
 
@@ -106,16 +115,33 @@ export class MsGenerator extends Generator {
 
   private removeUnkeptRanges(mergedRanges: Range[]): void {
     let lastEnd = 0
+    const preserveLineNumbers = this.options.preserveLineNumbers ?? false
 
     for (const [start, end] of mergedRanges) {
-      if (start > lastEnd)
-        this.s.remove(lastEnd, start)
+      if (start > lastEnd) {
+        if (preserveLineNumbers) {
+          const removed = this.s.original.slice(lastEnd, start)
+          const newlineCount = (removed.match(/\n/g) || []).length
+          this.s.overwrite(lastEnd, start, '\n'.repeat(newlineCount))
+        }
+        else {
+          this.s.remove(lastEnd, start)
+        }
+      }
       lastEnd = end
     }
 
     // 删除最后一个保留范围之后的内容
-    if (lastEnd < this.s.original.length)
-      this.s.remove(lastEnd, this.s.original.length)
+    if (lastEnd < this.s.original.length) {
+      if (preserveLineNumbers) {
+        const removed = this.s.original.slice(lastEnd, this.s.original.length)
+        const newlineCount = (removed.match(/\n/g) || []).length
+        this.s.overwrite(lastEnd, this.s.original.length, '\n'.repeat(newlineCount))
+      }
+      else {
+        this.s.remove(lastEnd, this.s.original.length)
+      }
+    }
   }
 
   private hasValidRange(node: SimpleNode): boolean {

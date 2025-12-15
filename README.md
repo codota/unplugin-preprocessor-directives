@@ -132,6 +132,83 @@ module.exports = {
 
 ## Usage
 
+### Plugin Options
+
+The plugin accepts the following configuration options:
+
+#### `preserveLineNumbers`
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+When enabled, the plugin will preserve line numbers by replacing removed code with empty lines instead of actually removing it. This is useful for debugging as it ensures that line numbers in error messages and debugger match the original source code.
+
+```ts
+PreprocessorDirectives({
+  preserveLineNumbers: true,
+})
+```
+
+**Example:**
+
+Original code:
+
+```js
+const message = 'Hello'
+
+// #if DEV
+
+console.log('Development mode')
+
+// #endif
+
+const result = compute()
+```
+
+With `preserveLineNumbers: false` (default):
+
+```js
+const message = 'Hello'
+
+const result = compute()
+```
+
+With `preserveLineNumbers: true`:
+
+```js
+const message = 'Hello'
+
+const result = compute()
+```
+
+#### `cwd`
+
+- **Type:** `string`
+- **Default:** `process.cwd()`
+
+The current working directory. Used for resolving relative paths in `#include` directives.
+
+#### `include`
+
+- **Type:** `string | RegExp | (string | RegExp)[]`
+- **Default:** `['**/*']`
+
+Files to include for processing. Supports glob patterns.
+
+#### `exclude`
+
+- **Type:** `string | RegExp | (string | RegExp)[]`
+- **Default:** `[/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]`
+
+Files to exclude from processing. Supports glob patterns.
+
+#### `directives`
+
+- **Type:** `Directive[]`
+- **Default:** `[]`
+
+Custom directives to add beyond the built-in ones. See [Custom directive](#custom-directive) for more information.
+
 ### Defining symbols
 
 You use the following two preprocessor directives to define or undefine symbols for conditional compilation:

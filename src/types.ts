@@ -7,6 +7,7 @@ export interface Options {
   directives: Directive<any, any>[]
   include: FilterPattern
   exclude: FilterPattern
+  preserveLineNumbers: boolean
 }
 
 export interface UserOptions extends Partial<Options> { }

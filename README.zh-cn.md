@@ -131,6 +131,83 @@ module.exports = {
 
 ## 使用
 
+### 插件选项
+
+插件接受以下配置选项：
+
+#### `preserveLineNumbers`
+
+- **类型:** `boolean`
+- **默认值:** `false`
+
+启用后，插件将通过用空行替换被删除的代码来保留行号，而不是实际删除它。这对于调试很有用，因为它确保错误消息和调试器中的行号与原始源代码匹配。
+
+```ts
+PreprocessorDirectives({
+  preserveLineNumbers: true,
+})
+```
+
+**示例：**
+
+原始代码：
+
+```js
+const message = 'Hello'
+
+// #if DEV
+
+console.log('Development mode')
+
+// #endif
+
+const result = compute()
+```
+
+使用 `preserveLineNumbers: false`（默认）：
+
+```js
+const message = 'Hello'
+
+const result = compute()
+```
+
+使用 `preserveLineNumbers: true`：
+
+```js
+const message = 'Hello'
+
+const result = compute()
+```
+
+#### `cwd`
+
+- **类型:** `string`
+- **默认值:** `process.cwd()`
+
+当前工作目录。用于解析 `#include` 指令中的相对路径。
+
+#### `include`
+
+- **类型:** `string | RegExp | (string | RegExp)[]`
+- **默认值:** `['**/*']`
+
+要处理的文件。支持 glob 模式。
+
+#### `exclude`
+
+- **类型:** `string | RegExp | (string | RegExp)[]`
+- **默认值:** `[/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/]`
+
+要从处理中排除的文件。支持 glob 模式。
+
+#### `directives`
+
+- **类型:** `Directive[]`
+- **默认值:** `[]`
+
+除了内置指令之外要添加的自定义指令。有关更多信息，请参见[自定义指令](#自定义指令)。
+
 ### 定义 symbols
 
 您可以使用以下两个预处理器指令来定义或取消定义 symbols，以便进行条件编译：
