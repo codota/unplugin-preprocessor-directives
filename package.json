@@ -1,5 +1,8 @@
 {
   "name": "@codota/unplugin-preprocessor-directives",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "type": "module",
   "version": "1.4.0",
   "packageManager": "pnpm@10.20.0",
